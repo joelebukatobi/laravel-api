@@ -14,7 +14,7 @@ class Category extends Model
     use HasSlug;
 
     protected $table='categories';
-    protected $fillable = ['name', 'status'];
+    protected $fillable = ['name', 'description', 'status'];
 
     public function getSlugOptions():SlugOptions { 
         return (new SlugOptions())

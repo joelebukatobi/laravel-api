@@ -169,4 +169,15 @@ class PostController extends Controller
 
         return response($response, 200);
     }
+
+    public function search($search) { 
+        $result = Post::where('title', 'LIKE', '%' . $search . '%')->orderBy('id', 'desc')->with('categories')->get();
+
+        $response = [
+            'success' => true,
+            'result' => $result 
+        ];
+
+        return response($response, 200);
+    }
 }

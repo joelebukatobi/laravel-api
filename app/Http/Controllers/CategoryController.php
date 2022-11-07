@@ -34,7 +34,7 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         //
-        $fields = $request->validate([
+        $request->validate([
                 'name' => 'required|string|unique:categories',
             ], 
             [  
@@ -45,7 +45,7 @@ class CategoryController extends Controller
         
 
         $category = Category::create([
-            'name' => $fields['name'],
+            'name' => $request->name,
         ]);
 
         $response = [
@@ -119,7 +119,7 @@ class CategoryController extends Controller
         $category->delete();
         $response = [
             'success' => true,
-            'message' => 'Category deleted successfully',
+            'message' => 'Subscription deleted successfully',
         ];
 
         return response($response, 200);

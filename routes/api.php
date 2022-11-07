@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\CategoryController;
@@ -41,6 +42,8 @@ Route::get('/tags/{slug}', [TagController::class, 'show']);
 // Posts
 Route::get('/posts', [PostController::class, 'index']);
 Route::get('/posts/{slug}', [PostController::class, 'show']);
+// Subscription
+Route::post('/subscriptions', [SubscriptionController::class, 'store']);
 
 
 
@@ -64,6 +67,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/posts', [PostController::class, 'store']);
     Route::post('/posts/{slug}', [PostController::class, 'update']);
     Route::delete('/posts/{slug}', [PostController::class, 'destroy']);
+    // Subscription
+    Route::get('/subscriptions', [SubscriptionController::class, 'index']);
+    Route::delete('/subscriptions/{id}', [SubscriptionController::class, 'destroy']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

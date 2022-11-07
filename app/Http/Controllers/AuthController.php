@@ -11,23 +11,22 @@ class AuthController extends Controller
 {
     //
     public function register( Request $request) { 
-        $fields = $request->validate([
+        $request->validate([
          'name' => 'required|string', 
          'email' => 'required|string|unique:users,email', 
          'password' => 'required|string|confirmed', 
         ]);
 
-
-
         $user = User::create([
-            'name' => $fields['name'],
-            'email' => $fields['email'],
-            'password' => bcrypt($fields['password']),
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
         ]);
 
-        $token = $user->createToken('myapptoken')->plainTextToken;
+        $token = $user->createToken('token')->plainTextToken;
         $response = [
             'user' => $user, 
+            'message' => 'User created successfully',
             'token' => $token, 
         ];
 
@@ -36,23 +35,29 @@ class AuthController extends Controller
     }
 
     public function login( Request $request) { 
-        $fields = $request->validate([
+        $request->validate([
          'email' => 'required|string', 
          'password' => 'required|string'
-        ]);
+        ],
+        [  
+            'email.required' => 'Please enter your email',
+            'password.required' => 'Please enter your password',
+        ]
+    );
 
         // Check User
-        $user = User::where('email', $fields['email'])-> first();
+        $user = User::where('email', $request->email)-> first();
         // Check Password
-        if(!$user || !Hash::check($fields['password'], $user->password)) { 
+        if(!$user || !Hash::check($request->password, $user->password)) { 
             return response([
-                'message' => 'Wrong Credentials'
+                'message' => 'Wrong credentials'
             ], 401);
         }
 
-        $token = $user->createToken('myapptoken')->plainTextToken;
+        $token = $user->createToken('token')->plainTextToken;
         $response = [
             'user' => $user, 
+            'message' => 'User login successful',
             'token' => $token,
         ];
 
