@@ -11,12 +11,12 @@ class Post extends Model
 {
     use HasFactory;
     use HasSlug;
-
+    
+    // protected $hidden = ['pivot'];
     protected $table='posts';
     protected $fillable =[ 
         'title',
         'post',
-        'tag_id',
         'cat_id',
         'user_id',
         'image',
@@ -41,12 +41,12 @@ class Post extends Model
     
 
     public function tags() { 
-        return $this->belongsTo(Tag::class, 'tag_id');
+        return $this->belongsToMany(Tag::class);
     }
-    public function categories() { 
-        return $this->belongsTo(Category::class, 'cat_id');
+    public function category() { 
+        return $this->belongsTo(Category::class, 'cat_id', 'id');
     }
-    public function users() { 
-        return $this->belongsTo(User::class, 'user_id');
+    public function user() { 
+        return $this->hasOne(User::class, 'user_id', 'id');
     }
 }

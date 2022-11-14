@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('slug');
             $table->longText('post');
             $table->foreignId('user_id')->constraint('users')->onDelete('cascade');
-            $table->foreignId('tag_id')->constraint('tags')->onDelete('cascade');
             $table->foreignId('cat_id')->constraint('categories')->onDelete('cascade');
             $table->string('image');
             $table->integer('views');

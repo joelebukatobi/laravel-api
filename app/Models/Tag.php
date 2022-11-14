@@ -12,8 +12,9 @@ class Tag extends Model
     use HasFactory;
     use HasSlug;
     
+    protected $hidden = ['pivot'];
     protected $table='tags';
-    protected $fillable = ['name', 'description', 'status'];
+    protected $fillable = ['name','status'];
 
     public function getSlugOptions():SlugOptions { 
         return (new SlugOptions())
@@ -30,8 +31,8 @@ class Tag extends Model
     public function getRouteKeyName() {
         return 'slug';
     }
-
+    
     public function posts() { 
-        return $this->hasMany(Post::class);
+        return $this->belongsToMany(Post::class);
     }
 }

@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
-use Illuminate\Http\Request;
+
 use Storage;
+use App\Models\Post;
+use App\Models\Category;
+use App\Models\Tag;
+use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
@@ -16,7 +19,7 @@ class PostController extends Controller
     public function index()
     {
         //
-        $post = Post::orderBy('created_at', 'desc')->with('tags', 'categories', 'users')->get();
+        $post = Post::orderBy('created_at', 'desc')->with(['tags'], 'categories', 'users')->get();
         $response = [
             'success' => true,
             'posts' => $post,
@@ -24,6 +27,17 @@ class PostController extends Controller
         
         return response ($response, 200);
     }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        $tags = Tag::all();
+    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -36,17 +50,15 @@ class PostController extends Controller
         //
        $request->validate([
                 'title' => 'required|string|unique:posts',
-                'post' => 'required',
-                'tag_id' => 'required',
-                'cat_id' => 'required',
-                'user_id' => 'required',
+                'post' => 'required|string',
+                'cat_id' => 'required|string',
+                'user_id' => 'required|string',
                 'image' => 'required',
             ], 
             [  
                 'title.required' => 'Please enter blogpost title',
                 'title.unique' => 'Sorry, this title has already been used',
                 'post.required' => 'Please add a blogpost',
-                'tag_id.required' => 'Please select blogpost tags',
                 'cat_id.required' => 'Please select blogpost category',
                 'user_id.required' => 'Please select blogpost author',
                 'image.required' => 'Please upload blogpost image',
@@ -60,16 +72,21 @@ class PostController extends Controller
             $filename = "null";
         }
         
+        
         $post = Post::create([
             'title' => $request->title,
             'post' => $request->post,
             'image' => $filename,
-            'tag_id' => $request->tag_id,
             'cat_id' => $request->cat_id,
             'user_id' => $request->user_id,
             'views' => 0
 
         ]);
+
+
+        if ($request->has('tags')) {
+            $post->tags()->attach($request->tags);
+        }
 
         $response = [
             'success' => true,
@@ -112,20 +129,19 @@ class PostController extends Controller
         $request->validate([
                 'title' => 'required|unique:posts',
                 'post' => 'required',
-                'tag_id' => 'required',
                 'cat_id' => 'required',
             ], 
             [  
                 'title.required' => 'Please enter blogpost title',
                 'title.unique' => 'Sorry, this title has already been used',
                 'post.required' => 'Please add a blogpost',
-                'tag_id.required' => 'Please select blogpost tags',
                 'cat_id.required' => 'Please select blogpost category',
             ]
         );
 
         $post = Post::where(['slug' => $slug])->firstOrFail();
         $edit = $request->all();
+
 
         $filename = "";
         if ($request->file('new_image')) {
@@ -139,8 +155,11 @@ class PostController extends Controller
             $edit['image'] = $filename;
         };
         
-
         $post->update($edit);
+
+        if ($request->has('tags')) {
+            $post->tags()->attach($request->tags);
+        }
 
         $response = [
             'success' => true,

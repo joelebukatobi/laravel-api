@@ -36,16 +36,19 @@ class CategoryController extends Controller
         //
         $request->validate([
                 'name' => 'required|string|unique:categories',
-            ], 
+                'description' => 'required|string',
+        ],
             [  
                 'name.required' => 'Please enter a category name',
                 'name.unique' => 'Sorry, this name has already been used',
+                'description.required' => 'Please enter a description for this category',
             ]
         ); 
         
 
         $category = Category::create([
             'name' => $request->name,
+            'description' => $request->description,
         ]);
 
         $response = [
