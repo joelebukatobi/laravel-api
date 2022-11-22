@@ -12,6 +12,23 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 class UserController extends Controller
 {
+
+      /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //
+        $users = User::orderBy('created_at', 'asc')->get();
+        $response = [
+            'success' => true,
+            'users' => $users,
+        ];
+        
+        return response ($response, 200);
+    }
     /**
      * Display the specified resource.
      *

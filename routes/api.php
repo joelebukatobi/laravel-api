@@ -47,8 +47,9 @@ Route::post('/subscriptions', [SubscriptionController::class, 'store']);
 // Protected Routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
     // User
-    Route::get('/user/me', [UserController::class, 'show']);
-    Route::post('/user/{username}', [UserController::class, 'update']);
+    Route::get('/users', [UserController::class, 'index']);
+    Route::get('/users/me', [UserController::class, 'show']);
+    Route::post('/users/{username}', [UserController::class, 'update']);
     // Auth
     Route::post('/logout', [AuthController::class, 'logout']);
     // Categories
@@ -68,6 +69,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('/subscriptions/{id}', [SubscriptionController::class, 'destroy']);
 });
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });

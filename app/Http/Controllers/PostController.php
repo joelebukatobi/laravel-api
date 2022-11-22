@@ -19,7 +19,7 @@ class PostController extends Controller
     public function index()
     {
         //
-        $post = Post::orderBy('created_at', 'desc')->with(['tags'], 'categories', 'users')->get();
+        $post = Post::with(['tags', 'category', 'user'])->orderBy('created_at', 'asc')->get();
         $response = [
             'success' => true,
             'posts' => $post,
@@ -80,10 +80,8 @@ class PostController extends Controller
             'cat_id' => $request->cat_id,
             'user_id' => $request->user_id,
             'views' => 0
-
         ]);
-
-
+        
         if ($request->has('tags')) {
             $post->tags()->attach($request->tags);
         }
@@ -107,7 +105,7 @@ class PostController extends Controller
     public function show($slug)
     {
         //     
-        $post = Post::where(['slug' => $slug])->firstOrFail();
+        $post = Post::where(['slug' => $slug])->with( 'category','tags', 'user')->orderBy('created_at', 'asc')->firstOrFail();
         $response = [
             'success' => true,
             'post' => $post, 
@@ -130,12 +128,14 @@ class PostController extends Controller
                 'title' => 'required|unique:posts',
                 'post' => 'required',
                 'cat_id' => 'required',
+                'user_id' => 'required'
             ], 
             [  
                 'title.required' => 'Please enter blogpost title',
                 'title.unique' => 'Sorry, this title has already been used',
                 'post.required' => 'Please add a blogpost',
                 'cat_id.required' => 'Please select blogpost category',
+                'user_id.required' => 'Please add blogpost author',
             ]
         );
 
@@ -155,10 +155,11 @@ class PostController extends Controller
             $edit['image'] = $filename;
         };
         
+
         $post->update($edit);
 
-        if ($request->has('tags')) {
-            $post->tags()->attach($request->tags);
+        if ($request->tags) {
+            $post->tags()->sync((array)$request->tags);
         }
 
         $response = [
