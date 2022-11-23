@@ -161,7 +161,7 @@ class PostController extends Controller
         $post->update($edit);
 
         if ($request->tags) {
-            $post->tags()->sync((array)$request->tags);
+            $post->tags()->sync($request->tags);
         }
 
         $response = [

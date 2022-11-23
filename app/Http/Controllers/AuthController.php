@@ -14,15 +14,17 @@ class AuthController extends Controller
         $request->validate([
             'first_name' => 'required|string',
             'last_name' => 'required|string',
-            'username' => 'required|string|unique:users,username', 
-            'email' => 'required|string|unique:users,email', 
-            'password' => 'required|string|confirmed', 
-        ],
+            'username' => 'required|unique:users|string', 
+            'email' => 'required|unique:users|string', 
+            'password' => 'required|string',
+        ], 
         [  
             'first_name' => 'Please enter your first name',
             'last_name' => 'Please enter your last name',
-            'username' => 'Please enter your your preferred username', 
-            'email' => 'Please enter your email', 
+            'username.required' => 'Please enter your your preferred username', 
+            'username.unique' => 'This username has been taken', 
+            'email.required' => 'Please enter your email', 
+            'email.unique' => 'This email has already been used', 
             'password' => 'Please enter you password',
         ]);
 
