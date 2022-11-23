@@ -127,15 +127,17 @@ class PostController extends Controller
         $request->validate([
                 'title' => 'required|unique:posts',
                 'post' => 'required',
-                'cat_id' => 'required',
-                'user_id' => 'required'
+                'cat_id' => 'required|integer',
+                'user_id' => 'required|integer'
             ], 
             [  
-                'title.required' => 'Please enter blogpost title',
-                'title.unique' => 'Sorry, this title has already been used',
-                'post.required' => 'Please add a blogpost',
-                'cat_id.required' => 'Please select blogpost category',
-                'user_id.required' => 'Please add blogpost author',
+                'title.required' => 'Please enter post title',
+                'title.unique' => 'Sorry, this post title has already been used',
+                'post.required' => 'Please add a post',
+                'cat_id.required' => 'Please select post category',
+                'user_id.required' => 'Please add post author',
+                'cat_id.integer' => 'Please select post category',
+                'user_id.integer' => 'Please select post author',
             ]
         );
 
