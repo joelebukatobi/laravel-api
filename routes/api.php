@@ -27,7 +27,10 @@ use Illuminate\Support\Facades\Route;
 
 // Public Routes
 // ------------------------------------------------------------------------
-// Authentication
+
+// User 
+Route::post('/register', [AuthController::class, 'register']); // Remember to delete in production!!!
+ // Authentication
 Route::post('/login', [AuthController::class, 'login']);
 // Category 
 Route::get('/categories', [CategoryController::class, 'index']);
@@ -46,10 +49,12 @@ Route::post('/subscriptions', [SubscriptionController::class, 'store']);
 // Protected Routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
     // User
-    Route::post('/register', [AuthController::class, 'register']);
     Route::get('/users', [UserController::class, 'index']);
-    Route::get('/users/me', [UserController::class, 'show']);
+    Route::get('/users/me', [UserController::class, 'me']);
+    Route::get('/users/{username}', [UserController::class, 'show']);
+    Route::post('/users/register', [UserController::class, 'register']);
     Route::post('/users/{username}', [UserController::class, 'update']);
+    Route::delete('/users/{username}', [UserController::class, 'destroy']);
     // Auth
     Route::post('/logout', [AuthController::class, 'logout']);
     // Categories
