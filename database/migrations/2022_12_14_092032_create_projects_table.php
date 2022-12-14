@@ -13,16 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('posts', function (Blueprint $table) {
-            $table->id(); 
-            $table->string('title');
+        Schema::create('projects', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
             $table->string('slug');
-            $table->longText('description');
-            $table->longText('post');
-            $table->foreignId('user_id')->constraint('users')->onDelete('cascade');
-            $table->foreignId('cat_id')->constraint('categories')->onDelete('cascade');
             $table->string('image');
-            $table->integer('views');
+            $table->longText('description');
+            $table->string('technologies');
+            $table->string('website');
+            $table->string('design')->nullable();
             $table->timestamps();
         });
     }
@@ -34,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('projects');
     }
 };

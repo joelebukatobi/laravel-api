@@ -7,26 +7,24 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class Post extends Model
+class Project extends Model
 {
     use HasFactory;
     use HasSlug;
-    
-    protected $hidden = ['user_id', 'cat_id'];
-    protected $table='posts';
+
+    protected $table='projects';
     protected $fillable =[ 
-        'title',
-        'post',
+        'name',
         'description',
-        'cat_id',
-        'user_id',
         'image',
-        'views',
+        'website',
+        'design',
+        'technologies',
     ];
 
     public function getSlugOptions():SlugOptions { 
         return (new SlugOptions())
-            ->generateSlugsFrom('title')
+            ->generateSlugsFrom('name')
             ->saveSlugsTo('slug')
             ->usingSeparator('-');
     }
@@ -39,14 +37,8 @@ class Post extends Model
     public function getRouteKeyName() {
         return 'slug';
     }
-    
 
-    public function tags() { 
-        return $this->belongsToMany(Tag::class);
-    }
-    public function category() { 
-        return $this->belongsTo(Category::class, 'cat_id');
-    }
+
     public function user() { 
         return $this->belongsTo(User::class, 'user_id');
     }

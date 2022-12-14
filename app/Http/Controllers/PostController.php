@@ -7,6 +7,7 @@ use Storage;
 use App\Models\Post;
 use App\Models\Category;
 use App\Models\Tag;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -16,16 +17,61 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //
-        $post = Post::with(['tags', 'category', 'user'])->orderBy('created_at', 'asc')->get();
-        $response = [
-            'success' => true,
-            'posts' => $post,
-        ];
-        
-        return response ($response, 200);
+        if (!$request->has('category')) {
+            // Return an error message if the request is empty
+            $posts = Post::with(['tags', 'category', 'user'])->orderBy('created_at', 'asc')->get();
+            $response = [
+                'success' => true,
+                'posts' => $posts,
+            ];
+            
+            return response ($response, 200);
+        } else {
+
+            // Get the category from the query string
+            $query = $request->query('category');
+
+            $category = Category::where('slug', $query)->pluck('id');
+
+            // Fetch the posts that belong to the category
+            $posts = Post::where('cat_id', $category)->with(['tags', 'category', 'user'])->orderBy('created_at', 'asc')->get();
+            $response = [
+                'success' => true,
+                'posts' => $posts,
+            ];
+
+            return response ($response, 200);
+        }
+
+        if (!$request->has('user')) {
+            // Return an error message if the request is empty
+            $posts = Post::with(['tags', 'category', 'user'])->orderBy('created_at', 'asc')->get();
+            $response = [
+                'success' => true,
+                'posts' => $posts,
+            ];
+            
+            return response ($response, 200);
+        } else {
+
+            // Get the category from the query string
+            $query = $request->query('user');
+
+            $category = User::where('username', $query)->pluck('id');
+
+            // Fetch the posts that belong to the category
+            $posts = Post::where('user_id', $category)->with(['tags', 'category', 'user'])->orderBy('created_at', 'asc')->get();
+            
+            $response = [
+                'success' => true,
+                'posts' => $posts,
+            ];
+
+            return response ($response, 200);
+        }
     }
 
     /**
@@ -47,9 +93,11 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        
         //
        $request->validate([
                 'title' => 'required|string|unique:posts',
+                'description' => 'required',
                 'post' => 'required|string',
                 'cat_id' => 'required|string',
                 'user_id' => 'required|string',
@@ -58,6 +106,7 @@ class PostController extends Controller
             [  
                 'title.required' => 'Please enter blogpost title',
                 'title.unique' => 'Sorry, this title has already been used',
+                'description' => 'Please enter a description',
                 'post.required' => 'Please add a blogpost',
                 'cat_id.required' => 'Please select blogpost category',
                 'user_id.required' => 'Please select blogpost author',
@@ -79,6 +128,7 @@ class PostController extends Controller
             'image' => $filename,
             'cat_id' => $request->cat_id,
             'user_id' => $request->user_id,
+            'description' => $request->description,
             'views' => 0
         ]);
         
@@ -125,14 +175,13 @@ class PostController extends Controller
     {
         //        
         $request->validate([
-                'title' => 'required|unique:posts',
+                'title' => 'required',
                 'post' => 'required',
                 'cat_id' => 'required|integer',
                 'user_id' => 'required|integer'
             ], 
             [  
                 'title.required' => 'Please enter post title',
-                'title.unique' => 'Sorry, this post title has already been used',
                 'post.required' => 'Please add a post',
                 'cat_id.required' => 'Please select post category',
                 'user_id.required' => 'Please add post author',

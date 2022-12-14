@@ -78,6 +78,18 @@ class CategoryController extends Controller
         return response($response, 200);
     }
 
+    public function showId($id)
+    {
+        //
+        $category = Category::where(['id' => $id])->firstOrFail();
+        $response = [
+            'success' => true,
+            'category' => $category, 
+        ];
+
+        return response($response, 200);
+    }
+
     /**
      * Update the specified resource in storage.
      *
